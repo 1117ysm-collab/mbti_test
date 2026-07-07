@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBTI 연애 처방전</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FFF7FA;
+    --lavender: #E7D9F6;
+    --pink: #FFD3E6;
+    --mint: #CFF6E4;
+    --peach: #FFE4C9;
+    --text-deep: #4A3B5C;
+    --text-soft: #7A6890;
+    --accent: #FF8FAE;
+    --accent2: #B48EE0;
+    --card-shadow: 0 10px 30px rgba(180, 142, 224, 0.18);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, var(--lavender) 0%, transparent 45%),
+      radial-gradient(circle at 85% 15%, var(--peach) 0%, transparent 40%),
+      radial-gradient(circle at 20% 90%, var(--mint) 0%, transparent 40%),
+      radial-gradient(circle at 90% 85%, var(--pink) 0%, transparent 45%),
+      var(--bg);
+    font-family: 'Gowun Dodum', sans-serif;
+    color: var(--text-deep);
+    display:flex;
+    justify-content:center;
+    padding: 32px 16px 60px;
+  }
+  .stage{
+    width:100%;
+    max-width: 720px;
+  }
+  .header{
+    text-align:center;
+    margin-bottom: 28px;
+  }
+  .header .eyebrow{
+    font-family:'Gaegu', cursive;
+    font-size: 15px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .header h1{
+    font-family:'Gaegu', cursive;
+    font-weight:700;
+    font-size: 34px;
+    margin: 0 0 8px;
+    color: var(--text-deep);
+  }
+  .header p{
+    font-size: 14px;
+    color: var(--text-soft);
+    margin:0;
+  }
+
+  /* ---- Selection screen ---- */
+  #select-screen .grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+  }
+  @media (max-width:520px){
+    #select-screen .grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+  .macaron{
+    position:relative;
+    border:none;
+    cursor:pointer;
+    border-radius: 22px;
+    padding: 18px 8px 14px;
+    font-family:'Gaegu', cursive;
+    font-weight:700;
+    font-size: 20px;
+    color: var(--text-deep);
+    text-align:center;
+    box-shadow: 0 6px 14px rgba(120, 90, 160, 0.15);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    overflow:hidden;
+  }
+  .macaron::after{
+    content:"";
+    position:absolute;
+    left:8%; right:8%; top: 46%;
+    height: 3px;
+    background: rgba(255,255,255,0.55);
+    border-radius: 2px;
+  }
+  .macaron .emoji{
+    display:block;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .macaron:hover{
+    transform: translateY(-6px) rotate(-1deg);
+    box-shadow: 0 14px 22px rgba(120, 90, 160, 0.25);
+  }
+  .macaron:active{ transform: translateY(-2px) scale(0.98); }
+
+  /* ---- Start screen ---- */
+  #start-screen .start-options{
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+    margin-top: 24px;
+  }
+  .btn.big{
+    padding: 20px 18px;
+    font-size: 18px;
+    border-radius: 20px;
+    box-shadow: 0 8px 18px rgba(180,142,224,0.2);
+  }
+  .btn.big .sub{
+    display:block;
+    font-family:'Gowun Dodum', sans-serif;
+    font-size: 12.5px;
+    font-weight:400;
+    margin-top: 4px;
+    opacity:0.85;
+  }
+
+  /* ---- Quiz screen ---- */
+  #quiz-screen{ display:none; }
+  .progress-bar{
+    height: 10px;
+    background: var(--lavender);
+    border-radius: 999px;
+    overflow:hidden;
+    margin-bottom: 20px;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+  .question-card{
+    background:#FFFDFB;
+    border-radius: 24px;
+    padding: 26px 22px;
+    box-shadow: var(--card-shadow);
+    border: 2px dashed var(--lavender);
+  }
+  .q-count{
+    font-family:'Gaegu', cursive;
+    color: var(--accent2);
+    font-weight:700;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .question-card h3{
+    font-family:'Gaegu', cursive;
+    font-size: 20px;
+    margin: 0 0 20px;
+    line-height:1.5;
+  }
+  .q-options{
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+  }
+  .q-option{
+    text-align:left;
+    border: 2px solid var(--lavender);
+    background: #fff;
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-family:'Gowun Dodum', sans-serif;
+    font-size: 14.5px;
+    color: var(--text-deep);
+    cursor:pointer;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+  .q-option:hover{
+    border-color: var(--accent);
+    background: #FFF6FA;
+    transform: translateX(4px);
+  }
+  .q-option:active{ transform: scale(0.98); }
+
+  /* ---- Result screen ---- */
+  #result-screen{ display:none; }
+  .prescription{
+    background: #FFFDFB;
+    border-radius: 26px;
+    padding: 30px 26px 26px;
+    box-shadow: var(--card-shadow);
+    position:relative;
+    border: 2px dashed var(--accent2);
+    animation: pop 0.35s ease;
+  }
+  @keyframes pop{
+    from{ opacity:0; transform: scale(0.92) translateY(10px); }
+    to{ opacity:1; transform: scale(1) translateY(0); }
+  }
+  .stamp{
+    position:absolute;
+    top: -18px;
+    right: 22px;
+    background: var(--accent);
+    color: #fff;
+    font-family:'Gaegu', cursive;
+    font-weight:700;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    transform: rotate(8deg);
+    box-shadow: 0 4px 10px rgba(255,143,174,0.4);
+  }
+  .rx-top{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    border-bottom: 2px solid var(--lavender);
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+  }
+  .rx-emoji{
+    font-size: 46px;
+    background: var(--type-color, var(--pink));
+    border-radius: 18px;
+    width: 72px; height:72px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .rx-top h2{
+    font-family:'Gaegu', cursive;
+    margin:0 0 4px;
+    font-size: 24px;
+  }
+  .rx-top .tagline{
+    font-size: 13px;
+    color: var(--accent2);
+    font-weight:700;
+    font-family:'Gaegu', cursive;
+  }
+  .section{
+    margin-bottom: 18px;
+  }
+  .section h3{
+    font-family:'Gaegu', cursive;
+    font-size: 16px;
+    margin: 0 0 8px;
+    color: var(--accent2);
+    display:flex; align-items:center; gap:6px;
+  }
+  .section p, .section li{
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--text-deep);
+    margin: 0;
+  }
+  .match-chips{
+    display:flex;
+    gap: 8px;
+    flex-wrap:wrap;
+    margin-top: 6px;
+  }
+  .chip{
+    background: var(--mint);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight:700;
+    font-family:'Gaegu', cursive;
+    color: var(--text-deep);
+  }
+  .actions{
+    display:flex;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .btn{
+    flex:1;
+    border:none;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-family:'Gaegu', cursive;
+    font-weight:700;
+    font-size: 15px;
+    cursor:pointer;
+    transition: transform 0.15s ease;
+  }
+  .btn:active{ transform: scale(0.97); }
+  .btn.primary{
+    background: var(--accent);
+    color:#fff;
+  }
+  .btn.secondary{
+    background: var(--lavender);
+    color: var(--text-deep);
+  }
+  footer{
+    text-align:center;
+    margin-top: 30px;
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="header">
+    <div class="eyebrow">L O V E   P R E S C R I P T I O N</div>
+    <h1>💌 나의 연애 처방전</h1>
+    <p>질문에 답하거나 MBTI를 골라주세요 — 당신의 연애 스타일을 처방해드릴게요</p>
+  </div>
+
+  <div id="start-screen">
+    <div class="start-options">
+      <button id="go-quiz" class="btn primary big">
+        💌 질문으로 알아보기
+        <span class="sub">12개의 질문에 답하고 나의 연애 유형 찾기</span>
+      </button>
+      <button id="go-pick" class="btn secondary big">
+        ✍️ MBTI 직접 고르기
+        <span class="sub">이미 내 MBTI를 알고 있어요</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="quiz-screen">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="question-card">
+      <div class="q-count" id="q-count"></div>
+      <h3 id="q-text"></h3>
+      <div class="q-options" id="q-options"></div>
+    </div>
+  </div>
+
+  <div id="select-screen" style="display:none;">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div id="result-screen">
+    <div class="prescription">
+      <div class="stamp">처방 완료 ✔</div>
+      <div class="rx-top">
+        <div class="rx-emoji" id="r-emoji"></div>
+        <div>
+          <h2 id="r-title"></h2>
+          <div class="tagline" id="r-tagline"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>🩷 연애 스타일</h3>
+        <p id="r-desc"></p>
+      </div>
+
+      <div class="section">
+        <h3>💊 궁합 처방</h3>
+        <div class="match-chips" id="r-match"></div>
+      </div>
+
+      <div class="section">
+        <h3>📋 연애 조언</h3>
+        <p id="r-advice"></p>
+      </div>
+
+      <div class="actions">
+        <button class="btn secondary" id="btn-retry">다시 고르기</button>
+        <button class="btn primary" id="btn-copy">결과 복사하기</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>재미로 보는 심리 테스트예요 · 결과는 참고용으로만 봐주세요 🌷</footer>
+</div>
+
+<script>
+const DATA = {
+  INTJ:{ color:"#DCEBFF", emoji:"♟️", title:"전략가형 연인", tagline:"\"완벽하게 설계된 로맨스\"",
+    desc:"연애도 인생의 다른 부분처럼 신중하게 접근해요. 감정을 쉽게 드러내진 않지만, 한 번 마음을 정하면 진지하고 깊게 몰입하는 타입이에요. 상대를 관찰하고 분석하면서 자기만의 방식으로 애정을 표현합니다.",
+    best:["ENFP","ENTP"], good:["INFJ"],
+    advice:"완벽한 타이밍을 기다리다 마음을 표현할 기회를 놓치지 마세요. 계획에 없던 즉흥적인 순간도 사랑을 키우는 재료가 될 수 있어요." },
+  INTP:{ color:"#E4E1FF", emoji:"🧪", title:"논리술사형 연인", tagline:"\"호기심으로 시작되는 사랑\"",
+    desc:"상대를 하나의 흥미로운 세계처럼 탐구해요. 표현이 서툴러 무심해 보일 수 있지만, 속으로는 끊임없이 상대를 생각하고 분석하는 로맨티스트예요.",
+    best:["ENFJ","ESFJ"], good:["ENTJ"],
+    advice:"머릿속 생각을 말로 꺼내는 연습을 해보세요. 상대는 당신의 마음을 읽어주는 초능력자가 아니랍니다." },
+  ENTJ:{ color:"#FFD9D0", emoji:"🎯", title:"지휘관형 연인", tagline:"\"목표는 확실한 사랑\"",
+    desc:"연애도 하나의 프로젝트처럼 주도적으로 이끌어가요. 상대를 위해 계획을 세우고 실행하는 걸 즐기며, 확신이 서면 직진하는 스타일이에요.",
+    best:["INFP","ISFP"], good:["INTJ"],
+    advice:"관계는 지휘하는 게 아니라 함께 만들어가는 거예요. 가끔은 운전대를 상대에게 넘겨주는 여유도 필요해요." },
+  ENTP:{ color:"#FFE8B0", emoji:"⚡", title:"변론가형 연인", tagline:"\"예측불가한 매력\"",
+    desc:"대화와 아이디어로 상대를 사로잡는 타입이에요. 지루한 걸 못 견디기 때문에 늘 새로운 화제와 이벤트로 관계에 활력을 불어넣어요.",
+    best:["INFJ","INTJ"], good:["ENFJ"],
+    advice:"논쟁에서 이기는 것보다 상대의 마음을 이해하는 게 더 중요할 때가 있어요. 가끔은 정답 대신 공감을 선택해보세요." },
+  INFJ:{ color:"#D9F0E8", emoji:"🕯️", title:"옹호자형 연인", tagline:"\"깊고 진지한 사랑\"",
+    desc:"겉으로는 조용하지만 내면에서는 상대에 대한 애정이 깊고 진하게 흘러요. 진정성 있는 교감을 중요하게 여기며, 한 사람에게 오래도록 마음을 쏟는 편이에요.",
+    best:["ENTP","ENFP"], good:["INTJ"],
+    advice:"완벽한 이해를 기다리기보다, 서툴러도 솔직하게 감정을 나누는 연습을 해보세요. 상대도 당신만큼 노력하고 있어요." },
+  INFP:{ color:"#F3D9F6", emoji:"🌙", title:"중재자형 연인", tagline:"\"몽상가 로맨티스트\"",
+    desc:"사랑에 낭만과 의미를 부여하는 타입이에요. 머릿속에 그려온 이상적인 관계상이 있고, 진심으로 통한다고 느껴지는 사람에게는 온 마음을 다해요.",
+    best:["ENTJ","ENFJ"], good:["ISFJ"],
+    advice:"이상 속의 사랑과 현실의 사랑 사이에서 실망하지 마세요. 완벽하지 않아도 진심인 관계가 결국 오래갑니다." },
+  ENFJ:{ color:"#FFDCEC", emoji:"🌷", title:"선도자형 연인", tagline:"\"따뜻한 헌신형 사랑꾼\"",
+    desc:"상대의 행복이 곧 나의 행복인 사람이에요. 세심하게 챙기고 응원하며, 관계 안에서 서로가 성장하길 바라는 다정한 조력자예요.",
+    best:["INFP","ISFP"], good:["INTP"],
+    advice:"상대를 챙기느라 정작 자신의 감정은 뒷전에 두지 않도록 주의하세요. 받는 법도 배워야 관계가 균형을 이뤄요." },
+  ENFP:{ color:"#FFE0B8", emoji:"🎈", title:"활동가형 연인", tagline:"\"열정 폭발형 사랑꾼\"",
+    desc:"만남 자체를 설레는 모험으로 만드는 타입이에요. 애정 표현이 풍부하고 즉흥적인 이벤트를 즐기며, 함께 있는 순간을 진심으로 만끽해요.",
+    best:["INTJ","INFJ"], good:["ISTJ"],
+    advice:"불타오르는 초반 설렘이 식은 뒤에도 관계를 지속하는 힘은 꾸준함이에요. 일상 속 작은 약속도 소중히 지켜보세요." },
+  ISTJ:{ color:"#D8E4F0", emoji:"🗝️", title:"현실주의자형 연인", tagline:"\"믿음직한 사랑\"",
+    desc:"화려한 이벤트보다 한결같은 신뢰를 사랑으로 보여주는 타입이에요. 약속을 지키고 책임을 다하는 모습에서 진심이 드러나는 편이에요.",
+    best:["ESFP","ENFP"], good:["ISFJ"],
+    advice:"감정을 말로 표현하는 게 어색해도 가끔은 직접 말해주세요. 행동만큼 말도 상대에게 큰 안정감을 줍니다." },
+  ISFJ:{ color:"#F0E6D8", emoji:"🧸", title:"수호자형 연인", tagline:"\"조용한 헌신\"",
+    desc:"상대가 눈치채지 못할 정도로 세심하게 배려하는 타입이에요. 소소한 것 하나까지 기억해두었다가 챙겨주는, 조용하지만 깊은 사랑을 하는 사람이에요.",
+    best:["ESFP","ESTP"], good:["INFP"],
+    advice:"희생이 당연해지지 않도록, 자신이 원하는 것도 편하게 말할 수 있는 관계를 만들어가세요." },
+  ESTJ:{ color:"#E0EEDD", emoji:"🛡️", title:"경영자형 연인", tagline:"\"든든한 보호자\"",
+    desc:"관계를 안정적으로 운영하는 능력이 뛰어난 타입이에요. 현실적인 문제 해결과 든든한 리더십으로 상대에게 신뢰를 주는 편이에요.",
+    best:["ISFP","ISTP"], good:["ESFJ"],
+    advice:"효율과 계획도 좋지만, 연애는 정답을 찾는 문제가 아니에요. 가끔은 비효율적인 낭만도 허용해보세요." },
+  ESFJ:{ color:"#FFE3E9", emoji:"🍯", title:"집정관형 연인", tagline:"\"다정한 케어러\"",
+    desc:"상대의 필요를 먼저 살피고 챙기는 걸 사랑으로 표현하는 타입이에요. 관계 속 분위기를 살뜰히 챙기며 다정한 안정감을 만들어줘요.",
+    best:["ISTP","ISFP"], good:["ISTJ"],
+    advice:"상대의 반응에 너무 신경 쓰다 보면 지칠 수 있어요. 인정받지 않아도 괜찮은 사랑도 있다는 걸 기억하세요." },
+  ISTP:{ color:"#E0E8EF", emoji:"🔧", title:"장인형 연인", tagline:"\"쿨한 실속파\"",
+    desc:"말보다 행동으로 마음을 보여주는 타입이에요. 무심해 보이지만 결정적인 순간에는 누구보다 든든하게 곁을 지켜주는 사람이에요.",
+    best:["ESFJ","ESTJ"], good:["ISFJ"],
+    advice:"침묵이 편해도 상대에게는 불안일 수 있어요. 짧은 한마디의 표현이 관계를 훨씬 편안하게 만들어줘요." },
+  ISFP:{ color:"#F5E0EC", emoji:"🎨", title:"모험가형 연인", tagline:"\"감성적인 자유인\"",
+    desc:"자기만의 속도로 사랑하는 타입이에요. 감성적이고 다정하지만 자유를 존중받는 걸 중요하게 여기며, 진심이 통할 때 온전히 마음을 열어요.",
+    best:["ESTJ","ENTJ"], good:["ESFJ"],
+    advice:"자유와 거리감을 혼동하지 마세요. 가까워지는 게 자유를 빼앗기는 게 아니라는 걸 스스로에게 알려주세요." },
+  ESTP:{ color:"#FFECC7", emoji:"🎲", title:"사업가형 연인", tagline:"\"즉흥적인 로맨스\"",
+    desc:"지금 이 순간의 설렘을 중요하게 여기는 타입이에요. 적극적이고 활발한 어프로치로 상대를 즐겁게 만들며, 연애도 하나의 신나는 경험으로 만들어요.",
+    best:["ISFJ","ISTJ"], good:["ESFP"],
+    advice:"즉흥적인 즐거움만큼 꾸준한 마음도 필요해요. 관계가 깊어질수록 안정감을 주는 연습도 함께 해보세요." },
+  ESFP:{ color:"#FFD9E0", emoji:"🎤", title:"연예인형 연인", tagline:"\"무대 위의 사랑꾼\"",
+    desc:"함께 있는 시간을 늘 즐겁고 활기차게 만드는 타입이에요. 애정 표현이 솔직하고 화려해서, 사랑받는다는 느낌을 확실하게 전해줘요.",
+    best:["ISTJ","ISFJ"], good:["ESTP"],
+    advice:"관계의 하이라이트만큼 조용하고 잔잔한 순간도 소중히 여겨보세요. 무대 밖에서의 편안함도 사랑의 일부예요." }
+};
+
+const QUESTIONS = [
+  { text:"썸 타는 상대에게 연락할 때 나는?",
+    options:[ {text:"궁금하면 바로 연락한다", letter:"E"}, {text:"타이밍을 재며 신중하게 보낸다", letter:"I"} ] },
+  { text:"데이트를 하고 나서 에너지가 필요할 때 나는?",
+    options:[ {text:"친구들을 만나서 에너지를 충전한다", letter:"E"}, {text:"혼자만의 시간으로 충전한다", letter:"I"} ] },
+  { text:"커플 모임 자리에서 나는?",
+    options:[ {text:"적극적으로 분위기를 이끈다", letter:"E"}, {text:"조용히 대화를 즐기는 편이다", letter:"I"} ] },
+  { text:"이상형을 떠올리면?",
+    options:[ {text:"구체적인 외모나 취향까지 그려진다", letter:"S"}, {text:"함께일 때의 분위기와 감정이 먼저 그려진다", letter:"N"} ] },
+  { text:"연인과 대화할 때 더 끌리는 주제는?",
+    options:[ {text:"오늘 있었던 일, 현실적인 계획", letter:"S"}, {text:"미래, 가치관, 깊은 생각", letter:"N"} ] },
+  { text:"기념일을 챙길 때 나는?",
+    options:[ {text:"실용적인 선물과 확실한 이벤트를 준비한다", letter:"S"}, {text:"의미와 서사가 담긴 이벤트를 구상한다", letter:"N"} ] },
+  { text:"연인과 다툴 때 나는?",
+    options:[ {text:"논리적으로 상황을 정리하려 한다", letter:"T"}, {text:"감정을 먼저 다독이려 한다", letter:"F"} ] },
+  { text:"상대가 힘들어할 때 나는?",
+    options:[ {text:"해결책을 제시한다", letter:"T"}, {text:"공감하며 곁에 있어준다", letter:"F"} ] },
+  { text:"연애에서 더 중요하다고 생각하는 건?",
+    options:[ {text:"합리적인 판단과 방향", letter:"T"}, {text:"서로의 감정과 교감", letter:"F"} ] },
+  { text:"데이트를 계획할 때 나는?",
+    options:[ {text:"미리 일정과 장소를 정해둔다", letter:"J"}, {text:"그때그때 즉흥적으로 정한다", letter:"P"} ] },
+  { text:"연애 초반, 관계의 방향성은?",
+    options:[ {text:"명확하게 정의하고 싶다", letter:"J"}, {text:"자연스럽게 흘러가는 걸 즐긴다", letter:"P"} ] },
+  { text:"연인과 여행을 간다면?",
+    options:[ {text:"세세한 일정표를 짜서 움직인다", letter:"J"}, {text:"즉흥적으로 다니는 게 더 재밌다", letter:"P"} ] }
+];
+
+let quizIndex = 0;
+let scores = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
+
+function startQuiz(){
+  quizIndex = 0;
+  scores = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[quizIndex];
+  document.getElementById('q-count').textContent = `Q${quizIndex+1} / ${QUESTIONS.length}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('progress-fill').style.width = `${(quizIndex/QUESTIONS.length)*100}%`;
+
+  const optWrap = document.getElementById('q-options');
+  optWrap.innerHTML = '';
+  q.options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'q-option';
+    b.textContent = opt.text;
+    b.addEventListener('click', ()=>{
+      scores[opt.letter]++;
+      quizIndex++;
+      if(quizIndex < QUESTIONS.length){
+        renderQuestion();
+      } else {
+        document.getElementById('progress-fill').style.width = `100%`;
+        finishQuiz();
+      }
+    });
+    optWrap.appendChild(b);
+  });
+}
+
+function finishQuiz(){
+  const type =
+    (scores.E >= scores.I ? 'E' : 'I') +
+    (scores.S >= scores.N ? 'S' : 'N') +
+    (scores.T >= scores.F ? 'T' : 'F') +
+    (scores.J >= scores.P ? 'J' : 'P');
+  document.getElementById('quiz-screen').style.display = 'none';
+  showResult(type);
+}
+
+document.getElementById('go-quiz').addEventListener('click', ()=>{
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  startQuiz();
+});
+document.getElementById('go-pick').addEventListener('click', ()=>{
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('select-screen').style.display = 'block';
+});
+
+const grid = document.getElementById('grid');
+Object.keys(DATA).forEach(type=>{
+  const d = DATA[type];
+  const btn = document.createElement('button');
+  btn.className = 'macaron';
+  btn.style.background = `linear-gradient(160deg, ${d.color}, #ffffff)`;
+  btn.innerHTML = `<span class="emoji">${d.emoji}</span>${type}`;
+  btn.addEventListener('click', ()=> showResult(type));
+  grid.appendChild(btn);
+});
+
+function showResult(type){
+  const d = DATA[type];
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('select-screen').style.display = 'none';
+  const result = document.getElementById('result-screen');
+  result.style.display = 'block';
+
+  document.querySelector('.rx-emoji').style.setProperty('--type-color', d.color);
+  document.getElementById('r-emoji').textContent = d.emoji;
+  document.getElementById('r-title').textContent = `${type} · ${d.title}`;
+  document.getElementById('r-tagline').textContent = d.tagline;
+  document.getElementById('r-desc').textContent = d.desc;
+  document.getElementById('r-advice').textContent = d.advice;
+
+  const matchWrap = document.getElementById('r-match');
+  matchWrap.innerHTML = '';
+  [...d.best, ...d.good].forEach((m,i)=>{
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = i < d.best.length ? `💞 ${m}` : `🙂 ${m}`;
+    matchWrap.appendChild(chip);
+  });
+
+  window.scrollTo({top:0, behavior:'smooth'});
+  window.__lastResult = { type, ...d };
+}
+
+document.getElementById('btn-retry').addEventListener('click', ()=>{
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+});
+
+document.getElementById('btn-copy').addEventListener('click', ()=>{
+  const r = window.__lastResult;
+  if(!r) return;
+  const text = `[${r.type}] ${r.title}\n${r.tagline}\n\n${r.desc}\n\n💞 궁합: ${r.best.join(', ')}\n\n📋 조언: ${r.advice}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('btn-copy');
+    const original = btn.textContent;
+    btn.textContent = '복사됐어요! ✔';
+    setTimeout(()=> btn.textContent = original, 1500);
+  }).catch(()=>{
+    alert('복사에 실패했어요. 직접 결과를 캡처해주세요!');
+  });
+});
+</script>
+</body>
+</html>
